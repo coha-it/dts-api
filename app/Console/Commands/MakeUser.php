@@ -66,5 +66,6 @@ class MakeUser extends Command
       $user->save();
       $this->info('Account created -> '. $user->id);
 
+      return 0;
     }
 }
