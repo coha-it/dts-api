@@ -15,16 +15,16 @@ $config = [
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
 
-  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon">
-  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.svg" rel="icon" type="image/svg+xml" sizes="any">
-  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.png" rel="icon" type="image/png" sizes="any">
+  {{-- <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon"> --}}
+  {{-- <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.svg" rel="icon" type="image/svg+xml" sizes="any"> --}}
+  {{-- <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.png" rel="icon" type="image/png" sizes="any"> --}}
 
-  <title>{{ config('app.name') }}</title>
+  {{-- <title>{{ config('app.name') }}</title> --}}
 
-  <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Nunito:400,400i,600,700|Merriweather:ital,wght@0,400;1,400;1,700|Roboto:100,300,400,500,700,900|Material+Icons|Raleway:400,700|Roboto+Mono&display=swap'>
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
+  {{-- <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Nunito:400,400i,600,700|Merriweather:ital,wght@0,400;1,400;1,700|Roboto:100,300,400,500,700,900|Material+Icons|Raleway:400,700|Roboto+Mono&display=swap'> --}}
+  {{-- <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet"> --}}
 
-  <link rel="stylesheet" href="{{ mix( '/dist/css/app.css') }}" />
+  {{-- <link rel="stylesheet" href="{{ mix( '/dist/css/app.css') }}" /> --}}
 </head>
 <body>
   <div id="app"></div>
@@ -35,6 +35,6 @@ $config = [
   </script>
 
   {{-- Load the application scripts --}}
-  <script src="{{ mix( '/dist/js/app.js' ) }}"></script>
+  {{-- <script src="{{ mix( '/dist/js/app.js' ) }}"></script> --}}
 </body>
 </html>
