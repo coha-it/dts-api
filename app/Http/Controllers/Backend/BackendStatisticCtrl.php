@@ -15,14 +15,29 @@ class BackendStatisticCtrl extends Controller
     public function getSurveysStatistics (Request $request) {
         switch ($request->type) {
             case 1:
-                # code...
                 return $this->statsOne($request);
                 break;
 
             case 2:
                 return $this->statsTwo($request);
                 break;
+        
+            case 3:
+                return $this->statsThree($request);
+                break;
         }
+    }
+
+    public function statsThree (Request $request) {
+        $ids = is_array($request->ids) ? $request->ids : [$request->ids];
+        $statistics = [
+            'surveys' => []
+        ];
+
+        foreach ($ids as $i => $val) {
+        }
+
+        return $statistics;
     }
 
     public function statsTwo (Request $request) {
@@ -33,7 +48,7 @@ class BackendStatisticCtrl extends Controller
 
         foreach ($ids as $i => $val) {
 
-            // Build DAta
+            // Build Data
             $id = $ids[$i];
             $survey = $request->user()->allowedSurveys()->find($id)->getSelfWithRelations();
 
