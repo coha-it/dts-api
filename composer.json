@@ -7,9 +7,9 @@
     "require": {
         "php": "^7.3",
         "fideloper/proxy": "^4.0",
-        "laravel/dusk": "^5.1",
+        "laravel/dusk": "^6.0",
         "laravel/framework": "^8.0",
-        "laravel/socialite": "^4.0",
+        "laravel/socialite": "^5.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
         "maatwebsite/excel": "^3.1",
