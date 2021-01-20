@@ -25,19 +25,43 @@ class BackendStatisticCtrl extends Controller
             case 3:
                 return $this->statsThree($request);
                 break;
+            // case 4:
+            //     return $this->statsFour($request);
+            //     break;
+            default:
+                return array("Error - No valid Statistics with ID $request->type available");
+                break;
         }
     }
 
     public function statsThree (Request $request) {
-        $ids = is_array($request->ids) ? $request->ids : [$request->ids];
-        $statistics = [
-            'surveys' => []
+        $aSurveyIds = is_array($request->ids) ? $request->ids : [$request->ids];
+        $aAllowedSurveyIds = [];
+        $aStatistics = [
+            'statistic' => []
         ];
 
-        foreach ($ids as $i => $val) {
+
+        foreach ($aSurveyIds as $index => $val) {
+            // Check if the Survey is in allowed Surveys
+            if($request->user()->allowedSurveys()->find($val)) {
+                array_push($aAllowedSurveyIds, $val);
+            }
         }
 
-        return $statistics;
+        print_r($aSurveyIds);
+        print_r($aAllowedSurveyIds);
+
+        // Blank SQL-Dump
+        DB::table('surveys')
+            ->select(DB::raw('surveys.id AS survey_id'))
+            ->where('status', '<>', 1)
+            ->groupBy('status')
+            ->get();
+
+        
+
+        return $aStatistics;
     }
 
     public function statsTwo (Request $request) {
