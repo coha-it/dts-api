@@ -78,7 +78,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('group/update', 'Backend\BackendGroupCtrl@updateGroup');
 
         // Get Users
-        Route::get('users-created', 'BackendCtrl@loadCreatedUsers'); // Created Users
+        Route::get('users-allowed', 'BackendCtrl@loadAllowedUsers'); // Created Users
 
         // Get a Generated PAN
         Route::get('get-random-pan', 'BackendCtrl@getRandomPan');
@@ -88,8 +88,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('remove-user-from-group', 'Backend\BackendGroupCtrl@removeUserFromGroup');
 
         // Change User(s)
-        Route::patch('update-created-users', 'BackendCtrl@updateCreatedUsers');
-        Route::patch('delete-created-user', 'BackendCtrl@deleteUser');
+        Route::patch('update-allowed-users', 'BackendCtrl@updateAllowedUsers');
+        Route::patch('delete-allowed-user', 'BackendCtrl@deleteUser');
         Route::post('create-users', 'BackendCtrl@createUsers')->middleware('auth.user.can_create_users');
 
         // Reload User

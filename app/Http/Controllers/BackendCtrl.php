@@ -37,12 +37,22 @@ class BackendCtrl extends Controller
         return $request->user()->getSelfWithRelations();
     }
 
-    public function loadCreatedUsers(Request $request) {
-        return $this->getCreatedUsersWithPin($request)->toJson();
+    public function loadAllowedUsers(Request $request) {
+        return $this->getAllowedUsersWithPin($request)->toJson();
     }
 
-    public function getCreatedUsersWithPin($request) {
-        return $request->user()->users->each(function ($i, $k) {
+    public function getAllowedUsersWithPin($request)
+    {
+        $user = $request->user();
+
+        // If User is Admin
+        if ($user->isAdminUser()) {
+            $users = User::all();
+        } else {
+            $users = $user->users;
+        }
+
+        return $users->each(function ($i, $k) {
             if($i && $i->pan) {
                 $i->pan->makeVisible(['pin']);
             }
@@ -148,7 +158,7 @@ class BackendCtrl extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function updateCreatedUsers(Request $request) {
+    public function updateAllowedUsers(Request $request) {
 
         // Get Data
         $self = $request->user();

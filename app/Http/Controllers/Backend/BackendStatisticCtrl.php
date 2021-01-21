@@ -29,12 +29,13 @@ class BackendStatisticCtrl extends Controller
             //     return $this->statsFour($request);
             //     break;
             default:
-                return array("Error - No valid Statistics with ID $request->type available");
+                return array("Error - No valid Statistics with Statistic-ID: \"$request->type\" available");
                 break;
         }
     }
 
-    public function statsThree (Request $request) {
+    public function statsThree (Request $request)
+    {
         $aSurveyIds = is_array($request->ids) ? $request->ids : [$request->ids];
         $aAllowedSurveyIds = [];
         $aStatistics = [
@@ -53,13 +54,11 @@ class BackendStatisticCtrl extends Controller
         print_r($aAllowedSurveyIds);
 
         // Blank SQL-Dump
-        DB::table('surveys')
+        $aStatistics = DB::table('surveys')
             ->select(DB::raw('surveys.id AS survey_id'))
-            ->where('status', '<>', 1)
-            ->groupBy('status')
+            // ->where('status', '<>', 1)
+            // ->groupBy('status')
             ->get();
-
-        
 
         return $aStatistics;
     }
