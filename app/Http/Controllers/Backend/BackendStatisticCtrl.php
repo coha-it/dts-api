@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Question;
 use App\User;
@@ -36,29 +37,105 @@ class BackendStatisticCtrl extends Controller
 
     public function statsThree (Request $request)
     {
-        $aSurveyIds = is_array($request->ids) ? $request->ids : [$request->ids];
+        $filter                 = is_array($request->filter) ? $request->filter : null;
+        $aRequestingSurveyIds   = is_array($request->ids) ? $request->ids : [$request->ids];
         $aAllowedSurveyIds = [];
         $aStatistics = [
-            'statistic' => []
+            'header' => [],
+            'data' => []
         ];
 
 
-        foreach ($aSurveyIds as $index => $val) {
+        foreach ($aRequestingSurveyIds as $index => $val) {
             // Check if the Survey is in allowed Surveys
             if($request->user()->allowedSurveys()->find($val)) {
                 array_push($aAllowedSurveyIds, $val);
             }
         }
 
-        print_r($aSurveyIds);
-        print_r($aAllowedSurveyIds);
-
         // Blank SQL-Dump
-        $aStatistics = DB::table('surveys')
-            ->select(DB::raw('surveys.id AS survey_id'))
+        $aStatistics['data'] = DB::table('surveys')->distinct()
+            ->select(
+                /* Survey-Data */
+                'surveys.id AS survey_id',
+                /* Get User-Data */
+                'u_pans.pan AS pan',
+                /* Get Users-Company / Department / Info */
+                'u_companies.name AS company_name',
+                'u_departments.name AS department_name',
+                'u_locations.name AS location_name',
+                
+                /* Get Question */
+                'questions.id AS question_id',
+                'questions.format AS question_format',
+                'questions.title AS question_title',
+                'questions.subtitle AS question_subtitle,',
+                'questions.description AS question_description',
+                /* Awnsers */
+                'awnsers.skipped AS awnser_skipped',
+                'awnsers.comment AS awnser_comment',
+                /* Get Question Options */
+                'question_options.value AS option_value',
+                'question_options.title AS option_title',
+                'question_options.subtitle AS option_subtitle',
+                'question_options.description AS option_desc'
+            )
+
+            /* From Awnsers*/
+            ->from('awnsers')
+
+            /* Get Users-Data */
+	        // LEFT JOIN users ON users.id = awnsers.user_id
+            ->leftJoin('users', 'users.id', '=', 'awnsers.user_id')
+            // LEFT JOIN u_pans ON u_pans.user_id = users.id
+            ->leftJoin('u_pans', 'u_pans.user_id', '=', 'users.id')
+
+	        /* Get Location Department Company */
+            // LEFT JOIN u_locations ON users.location_id = u_locations.id
+            ->leftJoin('u_locations', 'users.location_id', '=', 'u_locations.id')
+            // LEFT JOIN u_departments ON users.department_id = u_departments.id
+            ->leftJoin('u_departments', 'users.department_id', '=', 'u_departments.id')
+            // LEFT JOIN u_companies ON users.company_id = u_companies.id
+            ->leftJoin('u_companies', 'users.company_id', '=', 'u_companies.id')
+
+	        /* Get Question-Data */
+            // LEFT JOIN questions ON questions.id = awnsers.question_id
+            ->leftJoin('questions', 'questions.id', '=', 'awnsers.question_id')
+
+	        /* Match Survey */
+            // LEFT JOIN surveys ON surveys.id = questions.survey_id
+            ->leftJoin('surveys', 'surveys.id', '=', 'questions.survey_id')
+
+	        /* Get Awnser/and Question-Options */
+            // LEFT OUTER JOIN awnser_options ON awnser_options.awnser_id = awnsers.id
+            ->join('awnser_options', 'awnser_options.awnser_id', '=', 'awnsers.id', 'left outer')
+            // LEFT OUTER JOIN question_options ON question_options.id = awnser_options.option_id
+            ->join('question_options', 'question_options.id', '=', 'awnser_options.option_id', 'left outer')
+
+            /* Where Statements*/
+            // # surveys.id = 2
+            // surveys.id IN ('1', '2', '3')
+            ->whereIn('surveys.id', $aAllowedSurveyIds)
+
+            // AND users.id IS NOT NULL
+            // # AND u_pans.pan = '6CCYBZ'
+            // # AND u_pans.user_id = 11
+            ->whereNotNull('users.id')
+
+            // ORDER BY
+            // u_pans.pan, questions.id
+            ->orderBy('u_pans.pan', 'asc')
+            ->orderBy('questions.id', 'asc')
+
+            // LIMIT 100
+            ->limit($filter['limit'] ?? NULL)
+
             // ->where('status', '<>', 1)
             // ->groupBy('status')
             ->get();
+        
+        // Build Head
+        $aStatistics['header'] = array_keys((array) $aStatistics['data'][0]);
 
         return $aStatistics;
     }
