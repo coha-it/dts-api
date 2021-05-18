@@ -38,26 +38,14 @@ class BackendCtrl extends Controller
     }
 
     public function loadAllowedUsers(Request $request) {
-        return $this->getAllowedUsersWithPin($request)->toJson();
-    }
-
-    public function getAllowedUsersWithPin($request)
-    {
-        $user = $request->user();
-
-        // If User is Admin
-        if ($user->isAdminUser()) {
-	    // TMP FIX! THIS SHOULD BE SOMEWHERE ELSE!!!
-            $users = User::with(['pan', 'right', 'groups', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'newsletter'])->get();
-        } else {
-            $users = $user->users;
-        }
+        $self = $request->user();
+        $users = $self->getAllowedUsers();
 
         return $users->each(function ($i, $k) {
             if($i && $i->pan) {
                 $i->pan->makeVisible(['pin']);
             }
-        });
+        })->toJson();
     }
 
     public function getUser(Request $request) {
@@ -189,7 +177,7 @@ class BackendCtrl extends Controller
                 'pan.pin' => 'required|min:4|max:4'
             ]);
 
-            $user = $self->users->find($reqUser['id']);
+            $user = $self->getAllowedUsers()->find($reqUser['id']);
 
             // If Group is in Request
             if($user->groups && array_key_exists('groups', $reqUser)) {

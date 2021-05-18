@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\User;
 use App\Survey;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -318,6 +319,22 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         ;
     }
 
+    public function getAllowedUsers()
+    {
+        // Users with relations
+        $users = User::with(['pan', 'groups']);
+
+        // If Admin - Get all!
+        if ($this->isAdminUser()) {
+            return $users->get();
+        }
+
+        // If no Admin - get groups membering or created
+        return $users->whereHas('groupsMembering', function ($query) {
+            $query->whereIn('group_id', $this->groupsModerating->pluck('id'));
+        })->orWhere('created_by', $this->id)->get();
+    }
+
     /**
      * Get all the Fillable Surveys
      */
@@ -351,14 +368,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getSelfWithPanUserRelations()
     {
         return $this->with(['pan', 'groups', 'company', 'department', 'location'])->find($this->id);
-    }
-
-    /**
-     * Get the info record associated with the user.
-     */
-    public function getPanUsersWithRelations()
-    {
-        return $this->hasMany('App\User', 'created_by')->with(['pan', 'groups']);
     }
 
     /**
