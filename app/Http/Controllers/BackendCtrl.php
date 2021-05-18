@@ -47,7 +47,8 @@ class BackendCtrl extends Controller
 
         // If User is Admin
         if ($user->isAdminUser()) {
-            $users = User::all();
+	    // TMP FIX! THIS SHOULD BE SOMEWHERE ELSE!!!
+            $users = User::with(['pan', 'right', 'groups', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'newsletter'])->get();
         } else {
             $users = $user->users;
         }
@@ -191,7 +192,7 @@ class BackendCtrl extends Controller
             $user = $self->users->find($reqUser['id']);
 
             // If Group is in Request
-            if($user->groups) {
+            if($user->groups && array_key_exists('groups', $reqUser)) {
 
                 $aSync = [];
 
