@@ -322,7 +322,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getAllowedUsers()
     {
         // Users with relations
-        $users = User::with(['pan', 'groups']);
+        $users = User::with(['pan', 'groups', 'location', 'department', 'company']);
 
         // If Admin - Get all!
         if ($this->isAdminUser()) {
