@@ -21,7 +21,7 @@ class VerifyEmail extends Notification
             Carbon::now()->addMinutes(60), ['user' => $notifiable->id]
         );
 
-        $url = str_replace(env('APP_URL'), env('FRONTEND_URL'), $url);
+        $url = str_replace(URL::to('/'), env('FRONTEND_URL'), $url);
         $url = str_replace('/api', '', $url);
 
         return $url;
