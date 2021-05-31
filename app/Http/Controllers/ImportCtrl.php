@@ -14,7 +14,6 @@ class ImportCtrl extends Controller
         $aCsv = Excel::toArray(
             new ImportCtrl,
             $request->file('file')
-            // , \Maatwebsite\Excel\Excel::CSV
         )[0];
 
         // Validate CSV
@@ -22,12 +21,10 @@ class ImportCtrl extends Controller
             // Search and Found mail
             case array_search('mail', $head, true) !== false:
                 return response()->json($aCsv);
-                break;
 
             // Not Found
             default:
                 return response('Error in File. "mail" column not found or wrong delimiter. ; needed', 422);
-                break;
         }
 
     }
