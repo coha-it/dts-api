@@ -270,8 +270,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
             join('groups',            'groups.id',              '=', 'survey_group.group_id')->
             join('group_user',        'group_user.group_id',    '=', 'groups.id')->
-            where('group_user.user_id', '=', $this->id)->
-            where('group_user.is_member', '=', 1)->
+            where('group_user.is_member', true)->
+            where('group_user.user_id', $this->id)->
             select(
                 'surveys.*',
                 'groups.id AS group_id',
@@ -292,7 +292,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
             join('groups',            'groups.id',              '=', 'survey_group.group_id')->
             join('group_user',        'group_user.group_id',    '=', 'groups.id')->
-            where('group_user.is_mod', '=', 1)->
+            where('group_user.is_mod', true)->
+            where('group_user.user_id', $this->id)->
             select(
                 'surveys.*',
                 'groups.id AS group_id',
