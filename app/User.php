@@ -262,15 +262,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
-     * Get Surveys where User is a Member
+     * Get (the connected) Surveys where the User has anything todo with
      */
-    public function memberingSurveys()
-    {
+    public function connectedSurveys(String $is_type) {
         return Survey::
             join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
             join('groups',            'groups.id',              '=', 'survey_group.group_id')->
             join('group_user',        'group_user.group_id',    '=', 'groups.id')->
-            where('group_user.is_member', true)->
+            where('group_user.'.$is_type, true)->
             where('group_user.user_id', $this->id)->
             select(
                 'surveys.*',
@@ -284,25 +283,19 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
+     * Get Surveys where User is a Member
+     */
+    public function memberingSurveys()
+    {
+        return $this->connectedSurveys('is_member');
+    }
+    
+    /**
      * Get the Surveys inside the Group
      */
     public function groupSurveys()
     {
-        return Survey::
-            join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
-            join('groups',            'groups.id',              '=', 'survey_group.group_id')->
-            join('group_user',        'group_user.group_id',    '=', 'groups.id')->
-            where('group_user.is_mod', true)->
-            where('group_user.user_id', $this->id)->
-            select(
-                'surveys.*',
-                'groups.id AS group_id',
-                'survey_group.survey_id AS survey_id',
-                'group_user.group_id'
-            )->
-            get()-> // Hols dir
-            unique('survey_id') // Eindeutige IDs
-        ;
+        return $this->connectedSurveys('is_mod');
     }
 
     /**
