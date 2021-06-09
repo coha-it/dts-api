@@ -5,8 +5,8 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^7.3",
-        "fakerphp/faker": "^1.14",
+        "php": "^8.0",
+        "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.0",
         "laravel/dusk": "^6.0",
         "laravel/framework": "^8.0",
@@ -25,7 +25,7 @@
         "facade/ignition": "^2.3.6",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.3"
     },
     "config": {
         "optimize-autoloader": true,
