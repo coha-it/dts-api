@@ -229,6 +229,9 @@ class BackendCtrl extends Controller
         for ($i=0; $i < count($userIds); $i++) {
             // Find
             $id = $userIds[$i];
+
+            // TODO: Get allowed Users instead of only created users!
+            // TODO: Check if User exists and delete him. otherwise error response
             $user = $self->users->find($id);
 
             // Delete
