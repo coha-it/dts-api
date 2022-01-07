@@ -113,6 +113,9 @@ class BackendSurveyCtrl extends Controller
                 $question = $questions->updateOrCreate(['id' => $reqQuestionId], $tmp);
             }
 
+            // Check Settings
+            // $question->settings = (object)$question->settings;
+
             // Save Question
             $question->save();
 

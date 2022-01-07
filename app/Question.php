@@ -24,7 +24,7 @@ class Question extends Model
      * @var array
      */
     protected $casts = [
-        'settings' => 'array'
+        'settings' => 'object'
     ];
 
     /**
