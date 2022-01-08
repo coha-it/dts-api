@@ -26,9 +26,7 @@ class BackendStatisticCtrl extends Controller
             case 'sql_query':
                 return $this->sqlQuery($request);
                 break;
-            // case 4:
-            //     return $this->statsFour($request);
-            //     break;
+
             default:
                 return array("Error - No valid Statistics with Statistic-ID: \"$request->statistic_id\" available");
                 break;
@@ -44,7 +42,6 @@ class BackendStatisticCtrl extends Controller
             'header' => [],
             'data' => []
         ];
-
 
         foreach ($aRequestingSurveyIds as $index => $val) {
             // Check if the Survey is in allowed Surveys
