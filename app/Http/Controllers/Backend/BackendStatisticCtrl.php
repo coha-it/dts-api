@@ -14,26 +14,17 @@ class BackendStatisticCtrl extends Controller
 {
 
     public function getSurveysStatistics (Request $request) {
-        switch ($request->statistic_id) {
-            case 'csv_type':
-                return $this->csvType($request);
-                break;
 
-            case 'user_table':
-                return $this->userTable($request);
-                break;
-        
-            case 'sql_query':
-                return $this->sqlQuery($request);
-                break;
+        $function = $request->statistic_id;
 
-            default:
-                return array("Error - No valid Statistics with Statistic-ID: \"$request->statistic_id\" available");
-                break;
-        }
+        if(method_exists($this, $function)) {
+            return $this->$function($request);
+        } 
+
+        return ["Error - No valid Statistics with Statistic-View: \"$request->statistic_id\" available"];
     }
 
-    public function sqlQuery (Request $request)
+    protected function sql_query (Request $request)
     {
         $filter                 = is_array($request->filter) ? $request->filter : null;
         $aRequestingSurveyIds   = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
@@ -137,7 +128,7 @@ class BackendStatisticCtrl extends Controller
         return $aStatistics;
     }
 
-    public function userTable (Request $request) {
+    protected function user_table (Request $request) {
         $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
         $statistics = [
             'surveys' => []
@@ -241,7 +232,7 @@ class BackendStatisticCtrl extends Controller
         return $statistics;
     }
 
-    public function csvType (Request $request) {
+    protected function csv_type (Request $request) {
         $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
         $statistics = [
             "data" => [],
@@ -323,11 +314,11 @@ class BackendStatisticCtrl extends Controller
         return $statistics;
     }
 
-    public function search($a, $b) {
+    protected function search($a, $b) {
         return strpos(strtolower($a), strtolower($b)) !== false;
     }
 
-    public function getAllowedFilteredSurveys(Request $request) {
+    protected function getAllowedFilteredSurveys(Request $request) {
         $search = $request->search;
         return $request
                 ->user()
