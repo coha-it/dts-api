@@ -181,8 +181,8 @@ class BackendSurveyCtrl extends Controller
         if($reqSurvey['active']) {
             // Validate Start and End Datetime
             $request->validate([
-                'survey.start_datetime' => 'required|date_format:Y-m-d H:i:s',
-                'survey.end_datetime' => 'required|date_format:Y-m-d H:i:s'
+                'survey.start_datetime' => 'required|date', // date_format:Y-m-d H:i:s
+                'survey.end_datetime' => 'required|date' // date_format:Y-m-d H:i:s
             ]);
         }
 

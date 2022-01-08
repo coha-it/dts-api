@@ -18,7 +18,11 @@ class Survey extends Model
      * @var string
      */
     protected $table = 'surveys';
-    protected $dates = ['deleted_at'];
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
     /**
      * The attributes that are mass assignable.

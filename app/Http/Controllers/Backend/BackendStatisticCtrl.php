@@ -15,16 +15,16 @@ class BackendStatisticCtrl extends Controller
 
     public function getSurveysStatistics (Request $request) {
         switch ($request->type) {
-            case 1:
-                return $this->statsOne($request);
+            case 'csv_type':
+                return $this->csvType($request);
                 break;
 
-            case 2:
-                return $this->statsTwo($request);
+            case 'user_table':
+                return $this->userTable($request);
                 break;
         
-            case 3:
-                return $this->statsThree($request);
+            case 'sql_query':
+                return $this->sqlQuery($request);
                 break;
             // case 4:
             //     return $this->statsFour($request);
@@ -35,7 +35,7 @@ class BackendStatisticCtrl extends Controller
         }
     }
 
-    public function statsThree (Request $request)
+    public function sqlQuery (Request $request)
     {
         $filter                 = is_array($request->filter) ? $request->filter : null;
         $aRequestingSurveyIds   = is_array($request->ids) ? $request->ids : [$request->ids];
@@ -140,7 +140,7 @@ class BackendStatisticCtrl extends Controller
         return $aStatistics;
     }
 
-    public function statsTwo (Request $request) {
+    public function userTable (Request $request) {
         $ids = is_array($request->ids) ? $request->ids : [$request->ids];
         $statistics = [
             'surveys' => []
@@ -244,7 +244,7 @@ class BackendStatisticCtrl extends Controller
         return $statistics;
     }
 
-    public function statsOne (Request $request) {
+    public function csvType (Request $request) {
         $ids = is_array($request->ids) ? $request->ids : [$request->ids];
         $statistics = [
             "data" => [],
