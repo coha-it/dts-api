@@ -14,7 +14,7 @@ class BackendStatisticCtrl extends Controller
 {
 
     public function getSurveysStatistics (Request $request) {
-        switch ($request->type) {
+        switch ($request->statistic_id) {
             case 'csv_type':
                 return $this->csvType($request);
                 break;
@@ -30,7 +30,7 @@ class BackendStatisticCtrl extends Controller
             //     return $this->statsFour($request);
             //     break;
             default:
-                return array("Error - No valid Statistics with Statistic-ID: \"$request->type\" available");
+                return array("Error - No valid Statistics with Statistic-ID: \"$request->statistic_id\" available");
                 break;
         }
     }
@@ -38,7 +38,7 @@ class BackendStatisticCtrl extends Controller
     public function sqlQuery (Request $request)
     {
         $filter                 = is_array($request->filter) ? $request->filter : null;
-        $aRequestingSurveyIds   = is_array($request->ids) ? $request->ids : [$request->ids];
+        $aRequestingSurveyIds   = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
         $aAllowedSurveyIds = [];
         $aStatistics = [
             'header' => [],
@@ -141,7 +141,7 @@ class BackendStatisticCtrl extends Controller
     }
 
     public function userTable (Request $request) {
-        $ids = is_array($request->ids) ? $request->ids : [$request->ids];
+        $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
         $statistics = [
             'surveys' => []
         ];
@@ -245,7 +245,7 @@ class BackendStatisticCtrl extends Controller
     }
 
     public function csvType (Request $request) {
-        $ids = is_array($request->ids) ? $request->ids : [$request->ids];
+        $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
         $statistics = [
             "data" => [],
             "header" => []
