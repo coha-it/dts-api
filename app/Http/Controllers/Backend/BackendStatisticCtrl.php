@@ -25,7 +25,7 @@ class BackendStatisticCtrl extends Controller
     }
 
 
-    protected function questions (Request $request)
+    protected function awnser_options (Request $request)
     {
         // Variables
         $limit  = $this->getLimit($request);
