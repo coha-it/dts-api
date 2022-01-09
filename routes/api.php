@@ -118,8 +118,8 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::patch('delete-questions', 'Backend\BackendSurveyCtrl@deleteQuestions');
 
             // Statistics
-            Route::post('surveys-allowed-filtered', 'Backend\BackendStatisticCtrl@getAllowedFilteredSurveys');
-            Route::post('surveys-statistics', 'Backend\BackendStatisticCtrl@getSurveysStatistics');
+            Route::post('surveys-allowed-filtered', 'Backend\BackendStatisticCtrl@httpFilteredSurveys');
+            Route::post('surveys-statistics', 'Backend\BackendStatisticCtrl@httpSurveysStatistics');
         });
     });
 });

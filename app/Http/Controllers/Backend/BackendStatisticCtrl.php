@@ -12,36 +12,29 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class BackendStatisticCtrl extends Controller
 {
-
-    public function getSurveysStatistics (Request $request) {
-
+    public function httpSurveysStatistics (Request $request) {
         $function = $request->statistic_id;
-
         if(method_exists($this, $function)) {
             return $this->$function($request);
         } 
-
         return ["Error - No valid Statistics with Statistic-View: \"$request->statistic_id\" available"];
+    }
+
+    protected function getLimit (Request $request) {
+        return $request->limit ?? null;
     }
 
     protected function sql_query (Request $request)
     {
-        $filter                 = is_array($request->filter) ? $request->filter : null;
-        $aRequestingSurveyIds   = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
-        $aAllowedSurveyIds = [];
+        // Variables
+        $limit  = $this->getLimit($request);
+        $ids    = $this->getSelectedSurveysIds($request);
+
+        // Blank SQL-Dump
         $aStatistics = [
             'header' => [],
             'data' => []
         ];
-
-        foreach ($aRequestingSurveyIds as $index => $val) {
-            // Check if the Survey is in allowed Surveys
-            if($request->user()->allowedSurveys()->find($val)) {
-                array_push($aAllowedSurveyIds, $val);
-            }
-        }
-
-        // Blank SQL-Dump
         $aStatistics['data'] = DB::table('surveys')->distinct()
             ->select(
                 /* Survey-Data */
@@ -103,7 +96,7 @@ class BackendStatisticCtrl extends Controller
             /* Where Statements*/
             // # surveys.id = 2
             // surveys.id IN ('1', '2', '3')
-            ->whereIn('surveys.id', $aAllowedSurveyIds)
+            ->whereIn('surveys.id', $ids)
 
             // AND users.id IS NOT NULL
             // # AND u_pans.pan = '6CCYBZ'
@@ -116,7 +109,7 @@ class BackendStatisticCtrl extends Controller
             ->orderBy('questions.id', 'asc')
 
             // LIMIT 100
-            ->limit($filter['limit'] ?? NULL)
+            ->limit($limit ?? NULL)
 
             // ->where('status', '<>', 1)
             // ->groupBy('status')
@@ -129,7 +122,10 @@ class BackendStatisticCtrl extends Controller
     }
 
     protected function user_table (Request $request) {
-        $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
+        // Variables
+        $limit  = $this->getLimit($request);
+        $ids    = $this->getSelectedSurveysIds($request);
+
         $statistics = [
             'surveys' => []
         ];
@@ -233,7 +229,10 @@ class BackendStatisticCtrl extends Controller
     }
 
     protected function csv_type (Request $request) {
-        $ids = is_array($request->survey_ids) ? $request->survey_ids : [$request->survey_ids];
+        // Variables
+        $limit  = $this->getLimit($request);
+        $ids    = $this->getSelectedSurveysIds($request);
+
         $statistics = [
             "data" => [],
             "header" => []
@@ -318,11 +317,20 @@ class BackendStatisticCtrl extends Controller
         return strpos(strtolower($a), strtolower($b)) !== false;
     }
 
-    protected function getAllowedFilteredSurveys(Request $request) {
+    protected function getSelectedSurveysIds (Request $request) {
+        return $this->getSurveys($request)
+                    ->whereIn('id', $request->survey_ids)
+                    ->pluck('id')
+                    ->toArray();
+    }
+
+    protected function getSurveys(Request $request) {
+        return $request->user()->allowedSurveys();
+    }
+
+    protected function httpFilteredSurveys(Request $request) {
         $search = $request->search;
-        return $request
-                ->user()
-                ->allowedSurveys()
+        return $this->getSurveys($request)
                 ->filter(function ($value, $key) use ($search) {
                     if(!$search) return true;
 
@@ -347,4 +355,6 @@ class BackendStatisticCtrl extends Controller
                 ->take(5)
                 ->toArray();
     }
+
+
 }
