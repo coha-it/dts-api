@@ -60,7 +60,7 @@ class Survey extends Model
         'has_ended',
         'is_expired',
         'question_count',
-        'awnser_count',
+        'answer_count',
         'user_finished'
     ];
 
@@ -85,9 +85,9 @@ class Survey extends Model
         return $this->questions()->count();
     }
 
-    public function getAwnserCountAttribute()
+    public function getAnswerCountAttribute()
     {
-        return $this->userAwnsers()->count();
+        return $this->userAnswers()->count();
     }
 
     public function getHasStartedAttribute()
@@ -189,10 +189,10 @@ class Survey extends Model
                 ->find($this->id);
     }
 
-    public function getSelfWithQuestionsAndUsersAwnser()
+    public function getSelfWithQuestionsAndUsersAnswer()
     {
         return $this
-                ->with(['questions', 'questions.usersAwnser'])
+                ->with(['questions', 'questions.usersAnswer'])
                 ->find($this->id);
     }
 
@@ -228,10 +228,10 @@ class Survey extends Model
         return $this->questions()->find($id);
     }
 
-    public function userAwnsers()
+    public function userAnswers()
     {
         return $this
-                ->hasManyThrough('App\Awnser', 'App\Question')
+                ->hasManyThrough('App\Answer', 'App\Question')
                 ->where('user_id', auth()->user()->id);
     }
 

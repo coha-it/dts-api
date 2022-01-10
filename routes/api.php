@@ -39,8 +39,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('survey-fillable', 'SurveyCtrl@getFillableSurvey');
     Route::get('first-survey-fillable', 'SurveyCtrl@getFirstSurveyFillable');
 
-    // Update or create Awnser
-    Route::post('update-or-create-awnser', 'SurveyCtrl@httpUpdateOrCreateAwnser');
+    // Update or create Answer
+    Route::post('update-or-create-answer', 'SurveyCtrl@httpUpdateOrCreateAnswer');
 
     // Finish Survey
     Route::post('finish-survey', 'SurveyCtrl@httpFinishSurvey');

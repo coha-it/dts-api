@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Awnser extends Model
+class Answer extends Model
 {
     use SoftDeletes;
 
@@ -14,9 +14,9 @@ class Awnser extends Model
      *
      * @var string
      */
-    protected $table = 'awnsers';
+    protected $table = 'answers';
     protected $dates = ['deleted_at'];
-    protected $with = ['awnser_options'];
+    protected $with = ['answer_options'];
 
     /**
      * The attributes that are not mass assignable.
@@ -57,9 +57,9 @@ class Awnser extends Model
     /**
      * Question
      */
-    public function awnser_options()
+    public function answer_options()
     {
-        return $this->belongsToMany('App\QuestionOption', 'awnser_options', 'awnser_id', 'option_id');
+        return $this->belongsToMany('App\QuestionOption', 'answer_options', 'answer_id', 'option_id');
     }
 
 

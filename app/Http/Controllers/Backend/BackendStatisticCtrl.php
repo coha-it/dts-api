@@ -25,7 +25,7 @@ class BackendStatisticCtrl extends Controller
     }
 
 
-    protected function awnser_options (Request $request)
+    protected function answer_options (Request $request)
     {
         // Variables
         $limit  = $this->getLimit($request);
@@ -49,9 +49,9 @@ class BackendStatisticCtrl extends Controller
                     'questions.title AS question_title',
                     'questions.subtitle AS question_subtitle,',
                     'questions.description AS question_description',
-                    /* Awnsers */
-                    'awnsers.skipped AS awnser_skipped',
-                    'awnsers.comment AS awnser_comment',
+                    /* Answers */
+                    'answers.skipped AS answer_skipped',
+                    'answers.comment AS answer_comment',
                     /* Get Question Options */
                     'question_options.value AS option_value',
                     'question_options.title AS option_title',
@@ -60,12 +60,12 @@ class BackendStatisticCtrl extends Controller
                     'question_options.description AS option_desc'
                 )
 
-                /* From Awnsers*/
-                ->from('awnsers')
+                /* From Answers*/
+                ->from('answers')
 
                 /* Get Users-Data */
-                // LEFT JOIN users ON users.id = awnsers.user_id
-                ->leftJoin('users', 'users.id', '=', 'awnsers.user_id')
+                // LEFT JOIN users ON users.id = answers.user_id
+                ->leftJoin('users', 'users.id', '=', 'answers.user_id')
                 // LEFT JOIN u_pans ON u_pans.user_id = users.id
                 ->leftJoin('u_pans', 'u_pans.user_id', '=', 'users.id')
 
@@ -78,18 +78,18 @@ class BackendStatisticCtrl extends Controller
                 ->leftJoin('u_companies', 'users.company_id', '=', 'u_companies.id')
 
                 /* Get Question-Data */
-                // LEFT JOIN questions ON questions.id = awnsers.question_id
-                ->leftJoin('questions', 'questions.id', '=', 'awnsers.question_id')
+                // LEFT JOIN questions ON questions.id = answers.question_id
+                ->leftJoin('questions', 'questions.id', '=', 'answers.question_id')
 
                 /* Match Survey */
                 // LEFT JOIN surveys ON surveys.id = questions.survey_id
                 ->leftJoin('surveys', 'surveys.id', '=', 'questions.survey_id')
 
-                /* Get Awnser/and Question-Options */
-                // LEFT OUTER JOIN awnser_options ON awnser_options.awnser_id = awnsers.id
-                ->join('awnser_options', 'awnser_options.awnser_id', '=', 'awnsers.id', 'left outer')
-                // LEFT OUTER JOIN question_options ON question_options.id = awnser_options.option_id
-                ->join('question_options', 'question_options.id', '=', 'awnser_options.option_id', 'left outer')
+                /* Get Answer/and Question-Options */
+                // LEFT OUTER JOIN answer_options ON answer_options.answer_id = answers.id
+                ->join('answer_options', 'answer_options.answer_id', '=', 'answers.id', 'left outer')
+                // LEFT OUTER JOIN question_options ON question_options.id = answer_options.option_id
+                ->join('question_options', 'question_options.id', '=', 'answer_options.option_id', 'left outer')
 
                 /* Where Statements*/
                 // # surveys.id = 2
@@ -142,9 +142,9 @@ class BackendStatisticCtrl extends Controller
                 'questions.title AS question_title',
                 'questions.subtitle AS question_subtitle,',
                 'questions.description AS question_description',
-                /* Awnsers */
-                'awnsers.skipped AS awnser_skipped',
-                'awnsers.comment AS awnser_comment',
+                /* Answers */
+                'answers.skipped AS answer_skipped',
+                'answers.comment AS answer_comment',
                 /* Get Question Options */
                 'question_options.value AS option_value',
                 'question_options.title AS option_title',
@@ -152,12 +152,12 @@ class BackendStatisticCtrl extends Controller
                 'question_options.description AS option_desc'
             )
 
-            /* From Awnsers*/
-            ->from('awnsers')
+            /* From Answers*/
+            ->from('answers')
 
             /* Get Users-Data */
-	        // LEFT JOIN users ON users.id = awnsers.user_id
-            ->leftJoin('users', 'users.id', '=', 'awnsers.user_id')
+	        // LEFT JOIN users ON users.id = answers.user_id
+            ->leftJoin('users', 'users.id', '=', 'answers.user_id')
             // LEFT JOIN u_pans ON u_pans.user_id = users.id
             ->leftJoin('u_pans', 'u_pans.user_id', '=', 'users.id')
 
@@ -170,18 +170,18 @@ class BackendStatisticCtrl extends Controller
             ->leftJoin('u_companies', 'users.company_id', '=', 'u_companies.id')
 
 	        /* Get Question-Data */
-            // LEFT JOIN questions ON questions.id = awnsers.question_id
-            ->leftJoin('questions', 'questions.id', '=', 'awnsers.question_id')
+            // LEFT JOIN questions ON questions.id = answers.question_id
+            ->leftJoin('questions', 'questions.id', '=', 'answers.question_id')
 
 	        /* Match Survey */
             // LEFT JOIN surveys ON surveys.id = questions.survey_id
             ->leftJoin('surveys', 'surveys.id', '=', 'questions.survey_id')
 
-	        /* Get Awnser/and Question-Options */
-            // LEFT OUTER JOIN awnser_options ON awnser_options.awnser_id = awnsers.id
-            ->join('awnser_options', 'awnser_options.awnser_id', '=', 'awnsers.id', 'left outer')
-            // LEFT OUTER JOIN question_options ON question_options.id = awnser_options.option_id
-            ->join('question_options', 'question_options.id', '=', 'awnser_options.option_id', 'left outer')
+	        /* Get Answer/and Question-Options */
+            // LEFT OUTER JOIN answer_options ON answer_options.answer_id = answers.id
+            ->join('answer_options', 'answer_options.answer_id', '=', 'answers.id', 'left outer')
+            // LEFT OUTER JOIN question_options ON question_options.id = answer_options.option_id
+            ->join('question_options', 'question_options.id', '=', 'answer_options.option_id', 'left outer')
 
             /* Where Statements*/
             // # surveys.id = 2
@@ -233,7 +233,7 @@ class BackendStatisticCtrl extends Controller
                 'author' => $survey->author,
                 'desc_short' => $survey->desc_short,
                 'questions' => [],
-                'awnsers' => []
+                'answers' => []
             ];
 
             // Build Head / Questions
@@ -253,7 +253,7 @@ class BackendStatisticCtrl extends Controller
                 ];
             }
 
-            // Build Data / Body / Awnsers
+            // Build Data / Body / Answers
 
 
             // 1. Go throug all Users
@@ -265,40 +265,40 @@ class BackendStatisticCtrl extends Controller
                 ];
 
                 // 2. Go through all Questions Titles
-                foreach (Question::with('awnsers')->where('survey_id', $finishedSurvey->survey_id)->get() as $question) {
+                foreach (Question::with('answers')->where('survey_id', $finishedSurvey->survey_id)->get() as $question) {
                     // 3. Set for each title the value
-                    $awnser = $question->awnsers->where('user_id', '=', $finishedSurvey->user_id)->first();
-                    $aAwnser = [];
+                    $answer = $question->answers->where('user_id', '=', $finishedSurvey->user_id)->first();
+                    $aAnswer = [];
 
-                    foreach ($awnser->awnser_options as $i => $option) {
-                        $sAwnser = '';
+                    foreach ($answer->answer_options as $i => $option) {
+                        $sAnswer = '';
                         $title = $option->title;
                         $subtitle = $option->subtitle;
                         $description = $option->description;
 
-                        $sAwnser .= $title;
+                        $sAnswer .= $title;
 
                         if($subtitle || $description) {
 
-                            $sAwnser .= ' (';
-                            $sAwnser .= $subtitle;
-                            $sAwnser .= $description ? ', ' . $description : '';
-                            $sAwnser .= ')';
+                            $sAnswer .= ' (';
+                            $sAnswer .= $subtitle;
+                            $sAnswer .= $description ? ', ' . $description : '';
+                            $sAnswer .= ')';
                         }
 
-                        array_push($aAwnser, $sAwnser);
+                        array_push($aAnswer, $sAnswer);
                     }
 
-                    if($comment = $awnser->comment) {
-                        array_push($aAwnser, ' (Kommentar): "' . $comment .'" ');
+                    if($comment = $answer->comment) {
+                        array_push($aAnswer, ' (Kommentar): "' . $comment .'" ');
                     }
 
 
-                    $arr[$question['title']] = join(", ", $aAwnser); //->comment;
+                    $arr[$question['title']] = join(", ", $aAnswer); //->comment;
                 }
 
                 // Push Array to new Data
-                $statistics['surveys'][$id]['awnsers'][] = $arr;
+                $statistics['surveys'][$id]['answers'][] = $arr;
             }
 
             // Go Through all Users
@@ -306,10 +306,10 @@ class BackendStatisticCtrl extends Controller
             // foreach ($survey->questions as $question)
             // {
 //
-                // Go Through all Awnsers
-                // foreach (Question::with('awnsers')->find($question['id'])->awnsers as $awnser)
+                // Go Through all Answers
+                // foreach (Question::with('answers')->find($question['id'])->answers as $answer)
                 // {
-                    // echo $awnser->comment . "\n";
+                    // echo $answer->comment . "\n";
                 // }
             // }
 
@@ -339,8 +339,8 @@ class BackendStatisticCtrl extends Controller
 
             // echo "Survey: ". $survey['id'] . "\n";
             foreach ($survey->questions->toArray() as $j => $q) {
-                $question = Question::with('awnsers')->find($q['id']);
-                $awnsers = $question->awnsers;
+                $question = Question::with('answers')->find($q['id']);
+                $answers = $question->answers;
 
                 $questionKey = $question['title']." (#".$question['id'].")";
 
@@ -355,45 +355,45 @@ class BackendStatisticCtrl extends Controller
 
                 // Build Header
                 if ($j === 0) {
-                    foreach ($awnsers as $k => $awnser) {
-                        $statistics['header'][] = " User" .$awnser['user_id'];
+                    foreach ($answers as $k => $answer) {
+                        $statistics['header'][] = " User" .$answer['user_id'];
                     }
                 }
 
 
                 // echo "  Frage: ". $questionKey . "\n";
-                foreach ($awnsers as $k => $awnser) {
-                    $user = User::find($awnser['user_id']);
-                    $userAwnser = "Nutzer: (".$user->pan->pan.")";
-                    // echo "    " . $userAwnser . "\n";
+                foreach ($answers as $k => $answer) {
+                    $user = User::find($answer['user_id']);
+                    $userAnswer = "Nutzer: (".$user->pan->pan.")";
+                    // echo "    " . $userAnswer . "\n";
 
-                    $statistics['data'][$questionKey][$userAwnser] = "";
-                    $awnserContent = "";
+                    $statistics['data'][$questionKey][$userAnswer] = "";
+                    $answerContent = "";
 
-                    if ($awnser['skipped']) {
+                    if ($answer['skipped']) {
                         // Skipped
-                        $awnserContent = "Übersprungen";
-                        // echo "      -".$awnserContent."\n";
+                        $answerContent = "Übersprungen";
+                        // echo "      -".$answerContent."\n";
                     } else {
                         // Not skipped
-                        if ($options = $awnser['awnser_options']) {
+                        if ($options = $answer['answer_options']) {
                             foreach ($options as $l => $option) {
                                 $awnsr = $option['title'] . " - " . $option['subtitle'];
-                                // echo "      -awnser_options: " . $awnsr . "\n";
-                                $awnserContent .= $awnsr;
+                                // echo "      -answer_options: " . $awnsr . "\n";
+                                $answerContent .= $awnsr;
                             }
                         }
 
-                        if ($comment = $awnser['comment']) {
+                        if ($comment = $answer['comment']) {
                             $cmnt = "Comment: " . $comment;
                             // echo "      -" . $cmnt . "\n";
-                            $awnserContent .= $comment;
+                            $answerContent .= $comment;
                         }
                     }
 
 
 
-                    $statistics['data'][$questionKey][$userAwnser] = $awnserContent;
+                    $statistics['data'][$questionKey][$userAnswer] = $answerContent;
                 }
             }
 

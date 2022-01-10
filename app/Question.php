@@ -44,15 +44,15 @@ class Question extends Model
         return $this->belongsTo('App\Survey');
     }
 
-    public function awnsers()
+    public function answers()
     {
-        return $this->hasMany('App\Awnser');
+        return $this->hasMany('App\Answer');
     }
 
-    public function usersAwnser()
+    public function usersAnswer()
     {
         return $this
-                ->hasOne('App\Awnser')
+                ->hasOne('App\Answer')
                 ->where(
                     'user_id',
                     Auth()->user()->id

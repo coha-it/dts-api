@@ -54,11 +54,11 @@ class SurveyCtrl extends Controller
         );
     }
 
-    public function updateOrCreateAwnser($question, $request) {
-        // If requested Awnser was found
-        $reqAw              = $request->awnser;
+    public function updateOrCreateAnswer($question, $request) {
+        // If requested Answer was found
+        $reqAw              = $request->answer;
         $reqAw['user_id']   = Auth()->user()->id;
-        unset($reqAw['awnser_options']); // Remove Useless
+        unset($reqAw['answer_options']); // Remove Useless
 
         // If Question is not Skippable
         if(!$question->isSkippable()) {
@@ -67,36 +67,36 @@ class SurveyCtrl extends Controller
         }
 
         // Update Or Create
-        $awnser = $question->usersAwnser()->updateOrCreate(
+        $answer = $question->usersAnswer()->updateOrCreate(
             ['id' => $reqAw['id'] ?? 0],
             $reqAw
         );
 
         // If Question is skippable AND skipped
-        if($question->is_skippable && $awnser->skipped) {
-            // Awnser is Skipped
-            $this->syncWithOptions($awnser);
+        if($question->is_skippable && $answer->skipped) {
+            // Answer is Skipped
+            $this->syncWithOptions($answer);
         } else {
             // Create and De-/Re- Connect
-            $this->syncWithOptions($awnser, $request->awnser['awnser_options']); // Connect selected Options with Awnser's Options
+            $this->syncWithOptions($answer, $request->answer['answer_options']); // Connect selected Options with Answer's Options
         }
 
-        // REturn the Awnser
-        return $awnser;
+        // REturn the Answer
+        return $answer;
     }
 
-    public function syncWithOptions($awnser, $arr = []) {
-        $awnser->awnser_options()->sync(
+    public function syncWithOptions($answer, $arr = []) {
+        $answer->answer_options()->sync(
             array_column($arr, 'id')
         );
     }
 
-    public function httpUpdateOrCreateAwnser(Request $request) {
+    public function httpUpdateOrCreateAnswer(Request $request) {
         // Validate Data
         $request->validate([
             'survey_id' => 'required',
             'question_id' => 'required',
-            'awnser' => 'required'
+            'answer' => 'required'
         ]);
 
         // Find Variables like self or Survey
@@ -104,11 +104,11 @@ class SurveyCtrl extends Controller
         $survey     = $self->fillableSurvey($request->survey_id);
         $question   = $survey->question($request->question_id);
 
-        // Update or Create the Awnser
-        $awnser = $this->updateOrCreateAwnser($question, $request); // Update Awnser
+        // Update or Create the Answer
+        $answer = $this->updateOrCreateAnswer($question, $request); // Update Answer
 
         // Variables
-        return $question->usersAwnser()->find($awnser->id)->toJson();
+        return $question->usersAnswer()->find($answer->id)->toJson();
     }
 
     public function httpFinishSurvey(Request $request) {
@@ -121,9 +121,9 @@ class SurveyCtrl extends Controller
         $self       = $request->user();
         $survey     = $self->fillableSurvey($request->survey_id);
 
-        // Check if Awnsers count bigger or equal the questions
+        // Check if Answers count bigger or equal the questions
         if (
-            $survey->questions()->count() > $survey->userAwnsers()->count()
+            $survey->questions()->count() > $survey->userAnswers()->count()
         ) return abort(403, 'Es müssen zuerst alle Fragen beantwortet werden');
 
         // Finish Survey

@@ -13,24 +13,24 @@
 
 // Route::group(['middleware' => 'auth.user.admin'], function () {
 
-    // Route::get('awnsers-1', function () {
+    // Route::get('answers-1', function () {
     //     dd(
     //         Auth()->user()->fillableSurveys()->find(22) // find survey
     //         ->questions->find(108) // Find question
     //         ->question_options->find(141) // Find Options
-    //         ->awnser_options->find(1) // Find Awnser Options
-    //         ->awnser->toArray()
+    //         ->answer_options->find(1) // Find answer Options
+    //         ->answer->toArray()
     //     );
     // });
 
-    // Route::get('create-awnser-1', function () {
+    // Route::get('create-answer-1', function () {
     //         $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
     //         ->questions->find(109) // Find question
-    //         ->awnser()->updateOrCreate([
+    //         ->answer()->updateOrCreate([
     //             'user_id' => Auth()->user()->id
     //         ]);
 
-    //         $aw->awnser_options()->updateOrCreate([
+    //         $aw->answer_options()->updateOrCreate([
     //             'option_id' => 138
     //         ]);
     //         // ->question_options->find(141) // Find Options

@@ -38,13 +38,13 @@ class QuestionOption extends Model
         return $this->belongsTo('App\Question');
     }
 
-    public function awnser()
+    public function answer()
     {
-        return $this->belongsTo('App\Awnser', 'awnser_options');
+        return $this->belongsTo('App\Answer', 'answer_options');
     }
 
-    public function awnser_option()
+    public function answer_option()
     {
-        return $this->hasMany('App\AwnserOption', 'option_id');
+        return $this->hasMany('App\AnswerOption', 'option_id');
     }
 }
