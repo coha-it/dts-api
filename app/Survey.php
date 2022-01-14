@@ -87,7 +87,7 @@ class Survey extends Model
 
     public function getAnswerCountAttribute()
     {
-        return $this->userAnswers()->count();
+        return $this->answers()->count();
     }
 
     public function getHasStartedAttribute()
@@ -228,11 +228,14 @@ class Survey extends Model
         return $this->questions()->find($id);
     }
 
+    public function answers()
+    {
+        return $this->hasManyThrough('App\Answer', 'App\Question');
+    }
+
     public function userAnswers()
     {
-        return $this
-                ->hasManyThrough('App\Answer', 'App\Question')
-                ->where('user_id', auth()->user()->id);
+        return $this->answers()->where('user_id', auth()->user()->id);
     }
 
     /**

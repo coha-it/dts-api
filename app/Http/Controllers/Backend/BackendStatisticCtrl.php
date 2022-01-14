@@ -16,7 +16,7 @@ class BackendStatisticCtrl extends Controller
         $function = $request->statistic_id;
         if(method_exists($this, $function)) {
             return $this->$function($request);
-        } 
+        }
         return ["Error - No valid Statistics with Statistic-View: \"$request->statistic_id\" available"];
     }
 
@@ -32,86 +32,94 @@ class BackendStatisticCtrl extends Controller
         $ids    = $this->getSelectedSurveysIds($request);
 
         // Blank SQL-Dump
-        return DB::table('surveys')->distinct()
-                ->select(
-                    /* Survey-Data */
-                    'surveys.id AS survey_id',
-                    /* Get User-Data */
-                    'u_pans.pan AS pan',
-                    /* Get Users-Company / Department / Info */
-                    'u_companies.name AS company_name',
-                    'u_departments.name AS department_name',
-                    'u_locations.name AS location_name',
-                    
-                    /* Get Question */
-                    'questions.id AS question_id',
-                    'questions.format AS question_format',
-                    'questions.title AS question_title',
-                    'questions.subtitle AS question_subtitle,',
-                    'questions.description AS question_description',
-                    /* Answers */
-                    'answers.skipped AS answer_skipped',
-                    'answers.comment AS answer_comment',
-                    /* Get Question Options */
-                    'question_options.value AS option_value',
-                    'question_options.title AS option_title',
-                    'question_options.subtitle AS option_subtitle',
-                    'question_options.color AS option_color',
-                    'question_options.description AS option_desc'
-                )
+        $answers = DB::table('surveys')->distinct()
+            ->select(
+                /* Survey-Data */
+                'surveys.id AS survey_id',
+                /* Get User-Data */
+                'u_pans.pan AS pan',
+                /* Get Users-Company / Department / Info */
+                'u_companies.name AS company_name',
+                'u_departments.name AS department_name',
+                'u_locations.name AS location_name',
 
-                /* From Answers*/
-                ->from('answers')
+                /* Get Question */
+                'questions.id AS question_id',
+                'questions.format AS question_format',
+                'questions.title AS question_title',
+                'questions.subtitle AS question_subtitle,',
+                'questions.description AS question_description',
+                /* Answers */
+                'answers.id AS answer_id',
+                'answers.skipped AS answer_skipped',
+                'answers.comment AS answer_comment',
+                /* Get Question Options */
+                'question_options.value AS option_value',
+                'question_options.title AS option_title',
+                'question_options.subtitle AS option_subtitle',
+                'question_options.color AS option_color',
+                'question_options.description AS option_desc'
+            )
 
-                /* Get Users-Data */
-                // LEFT JOIN users ON users.id = answers.user_id
-                ->leftJoin('users', 'users.id', '=', 'answers.user_id')
-                // LEFT JOIN u_pans ON u_pans.user_id = users.id
-                ->leftJoin('u_pans', 'u_pans.user_id', '=', 'users.id')
+            /* From Answers*/
+            ->from('answers')
 
-                /* Get Location Department Company */
-                // LEFT JOIN u_locations ON users.location_id = u_locations.id
-                ->leftJoin('u_locations', 'users.location_id', '=', 'u_locations.id')
-                // LEFT JOIN u_departments ON users.department_id = u_departments.id
-                ->leftJoin('u_departments', 'users.department_id', '=', 'u_departments.id')
-                // LEFT JOIN u_companies ON users.company_id = u_companies.id
-                ->leftJoin('u_companies', 'users.company_id', '=', 'u_companies.id')
+            /* Get Users-Data */
+            // LEFT JOIN users ON users.id = answers.user_id
+            ->leftJoin('users', 'users.id', '=', 'answers.user_id')
+            // LEFT JOIN u_pans ON u_pans.user_id = users.id
+            ->leftJoin('u_pans', 'u_pans.user_id', '=', 'users.id')
 
-                /* Get Question-Data */
-                // LEFT JOIN questions ON questions.id = answers.question_id
-                ->leftJoin('questions', 'questions.id', '=', 'answers.question_id')
+            /* Get Location Department Company */
+            // LEFT JOIN u_locations ON users.location_id = u_locations.id
+            ->leftJoin('u_locations', 'users.location_id', '=', 'u_locations.id')
+            // LEFT JOIN u_departments ON users.department_id = u_departments.id
+            ->leftJoin('u_departments', 'users.department_id', '=', 'u_departments.id')
+            // LEFT JOIN u_companies ON users.company_id = u_companies.id
+            ->leftJoin('u_companies', 'users.company_id', '=', 'u_companies.id')
 
-                /* Match Survey */
-                // LEFT JOIN surveys ON surveys.id = questions.survey_id
-                ->leftJoin('surveys', 'surveys.id', '=', 'questions.survey_id')
+            /* Get Question-Data */
+            // LEFT JOIN questions ON questions.id = answers.question_id
+            ->leftJoin('questions', 'questions.id', '=', 'answers.question_id')
 
-                /* Get Answer/and Question-Options */
-                // LEFT OUTER JOIN answer_options ON answer_options.answer_id = answers.id
-                ->join('answer_options', 'answer_options.answer_id', '=', 'answers.id', 'left outer')
-                // LEFT OUTER JOIN question_options ON question_options.id = answer_options.option_id
-                ->join('question_options', 'question_options.id', '=', 'answer_options.option_id', 'left outer')
+            /* Match Survey */
+            // LEFT JOIN surveys ON surveys.id = questions.survey_id
+            ->leftJoin('surveys', 'surveys.id', '=', 'questions.survey_id')
 
-                /* Where Statements*/
-                // # surveys.id = 2
-                // surveys.id IN ('1', '2', '3')
-                ->whereIn('surveys.id', $ids)
+            /* Get Answer/and Question-Options */
+            // LEFT OUTER JOIN answer_options ON answer_options.answer_id = answers.id
+            ->join('answer_options', 'answer_options.answer_id', '=', 'answers.id', 'left outer')
+            // LEFT OUTER JOIN question_options ON question_options.id = answer_options.option_id
+            ->join('question_options', 'question_options.id', '=', 'answer_options.option_id', 'left outer')
 
-                // AND users.id IS NOT NULL
-                // # AND u_pans.pan = '6CCYBZ'
-                // # AND u_pans.user_id = 11
-                ->whereNotNull('users.id')
+            /* Where Statements*/
+            // # surveys.id = 2
+            // surveys.id IN ('1', '2', '3')
+            ->whereIn('surveys.id', $ids)
 
-                // ORDER BY
-                // u_pans.pan, questions.id
-                ->orderBy('u_pans.pan', 'asc')
-                ->orderBy('questions.id', 'asc')
+            // AND users.id IS NOT NULL
+            // # AND u_pans.pan = '6CCYBZ'
+            // # AND u_pans.user_id = 11
+            ->whereNotNull('users.id')
 
-                // LIMIT 100
-                ->limit($limit ?? NULL)
+            // ORDER BY
+            // u_pans.pan, questions.id
+            ->orderBy('u_pans.pan', 'asc')
+            ->orderBy('questions.id', 'asc')
 
-                // ->where('status', '<>', 1)
-                // ->groupBy('status')
-                ->get();
+            // LIMIT 100
+            ->limit($limit ?? NULL)
+
+            // ->where('status', '<>', 1)
+            // ->groupBy('status')
+            ->get();
+
+
+
+        return [
+            'surveys' => $this->getSelectedSurveys($request)->toArray(),
+            'answers' => $answers,
+        ];
     }
 
     protected function sql_query (Request $request)
@@ -135,7 +143,7 @@ class BackendStatisticCtrl extends Controller
                 'u_companies.name AS company_name',
                 'u_departments.name AS department_name',
                 'u_locations.name AS location_name',
-                
+
                 /* Get Question */
                 'questions.id AS question_id',
                 'questions.format AS question_format',
@@ -204,7 +212,7 @@ class BackendStatisticCtrl extends Controller
             // ->where('status', '<>', 1)
             // ->groupBy('status')
             ->get();
-        
+
         // Build Head
         $aStatistics['header'] = array_keys((array) $aStatistics['data'][0]);
 
@@ -407,11 +415,12 @@ class BackendStatisticCtrl extends Controller
         return strpos(strtolower($a), strtolower($b)) !== false;
     }
 
-    protected function getSelectedSurveysIds (Request $request) {
-        return $this->getSurveys($request)
-                    ->whereIn('id', $request->survey_ids)
-                    ->pluck('id')
-                    ->toArray();
+    protected function getSelectedSurveysIds ($request) {
+        return $this->getSelectedSurveys($request)->pluck('id')->toArray();
+    }
+
+    protected function getSelectedSurveys ($request) {
+        return $this->getSurveys($request)->whereIn('id', $request->survey_ids);
     }
 
     protected function getSurveys(Request $request) {
